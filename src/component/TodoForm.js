@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 
 function TodoForm({ addTodo }) {
   const [value, setValue] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
     if (!value) return;
-    addTodo(value);
+    addTodo(value, dueDate);
     setValue('');
+    setDueDate('');
   };
 
   return (
@@ -18,6 +20,13 @@ function TodoForm({ addTodo }) {
         value={value}
         onChange={e => setValue(e.target.value)}
         placeholder="Add to-do item"
+      />
+      <input
+        type="date"
+        className="input"
+        value={dueDate}
+        onChange={e => setDueDate(e.target.value)}
+        placeholder="Due date"
       />
       <button type="submit">Add Item</button>
     </form>

@@ -6,8 +6,8 @@ import './App.css';
 function TodoList() {
   const [todos, setTodos] = useState([]);
 
-  const addTodo = text => {
-    const newTodos = [...todos, { text, completed: false, pinned: false }];
+  const addTodo = (text, dueDate) => {
+    const newTodos = [...todos, { text, completed: false, dueDate }];
     setTodos(newTodos);
   };
 
@@ -23,19 +23,20 @@ function TodoList() {
     setTodos(newTodos);
   };
 
-  const editTodo = (index, text) => {
+  const editTodo = (index, text, dueDate) => {
     const newTodos = [...todos];
     newTodos[index].text = text;
+    newTodos[index].dueDate = dueDate;
     setTodos(newTodos);
   };
 
+
   const pinTodo = index => {
     const newTodos = [...todos];
-    const todoToPin = newTodos.splice(index, 1)[0];
-    todoToPin.pinned = true;
-    newTodos.unshift(todoToPin);
+    const todoToPin = newTodos.splice(index, 1);
+    newTodos.unshift(todoToPin[0]);
     setTodos(newTodos);
-  }
+  };
 
   return (
     <div>
