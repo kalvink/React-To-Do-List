@@ -7,7 +7,7 @@ function TodoList() {
   const [todos, setTodos] = useState([]);
 
   const addTodo = text => {
-    const newTodos = [...todos, { text, completed: false }];
+    const newTodos = [...todos, { text, completed: false, pinned: false }];
     setTodos(newTodos);
   };
 
@@ -23,6 +23,20 @@ function TodoList() {
     setTodos(newTodos);
   };
 
+  const editTodo = (index, text) => {
+    const newTodos = [...todos];
+    newTodos[index].text = text;
+    setTodos(newTodos);
+  };
+
+  const pinTodo = index => {
+    const newTodos = [...todos];
+    const todoToPin = newTodos.splice(index, 1)[0];
+    todoToPin.pinned = true;
+    newTodos.unshift(todoToPin);
+    setTodos(newTodos);
+  }
+
   return (
     <div>
       <TodoForm addTodo={addTodo} />
@@ -34,6 +48,8 @@ function TodoList() {
             todo={todo}
             removeTodo={removeTodo}
             toggleTodo={toggleTodo}
+            editTodo={editTodo}
+            pinTodo={pinTodo}
           />
         ))}
       </ul>
