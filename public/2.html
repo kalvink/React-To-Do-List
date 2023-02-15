@@ -1,0 +1,32 @@
+<body>
+  <div id="root"></div>
+  <!--CDN for React-->
+  <script src="https://unpkg.com/react@16.7.0/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@16.7.0/umd/react-dom.production.min.js"></script>
+  <!--CDN for Babel (JSX)-->
+  <script src="https://unpkg.com/@babel/standalone@7.20.15/babel.min.js"></script>
+
+  <!-- Change to text/babel to use babel -->
+  <script type="text/babel">
+    const rootElement = document.getElementById('root')
+    const children = 'Child 1'
+    const worldChild = ' Hello '
+    const className = 'container'
+    const children2 = 'Child 2'
+    const className2 = 'container2'
+    const children3 = 'Child 3'
+    const className3 = 'container3'
+    const props = { children, className }
+    //  const element = React.createElement('div', {
+    //    children: ['Hello World', ' Goodbye World'],
+    //    className: 'container',
+    //  })
+
+    //JSX makes it easier to use HTML in React
+    const element = <div {...props} />
+    console.log(element)
+    ReactDOM.render(element, rootElement)
+
+  </script>
+
+</body>
