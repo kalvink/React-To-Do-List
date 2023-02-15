@@ -6,14 +6,11 @@ function TodoItem({ todo, index, removeTodo, toggleTodo, editTodo, pinTodo }) {
     textDecoration: 'line-through'
   };
 
-  const handleEdit = () => {
-    const newTaskName = prompt('Enter new task name', todo.text);
-    const newDueDate = new Date(prompt('Enter due date', todo.dueDate));
+  const handleEdit = (newTaskName, newDueDate) => {
     if (newTaskName && newDueDate) {
-      editTodo(index, newTaskName, newDueDate);
+      editTodo(index, newTaskName, newDueDate.toISOString());
     }
   };
-
 
   const handlePin = () => {
     pinTodo(index);
@@ -29,17 +26,28 @@ function TodoItem({ todo, index, removeTodo, toggleTodo, editTodo, pinTodo }) {
       <span style={todo.completed ? completedStyle : null}>
         {todo.text}
       </span>
-      <span className="due-date">{todo.dueDate ? todo.dueDate.toLocaleDateString() : ''}</span>
+      <span className="due-date">{todo.dueDate ? new Date(todo.dueDate).toLocaleDateString() : ''}</span>
 
       <button className="pin-button" onClick={handlePin}>
         {todo.pinned ? 'Unpin' : 'Pin'}
       </button>
-      <form className="edit-form" onSubmit={handleEdit}>
+      <form className="edit-form" onSubmit={e => {
+        e.preventDefault();
+        const newTaskName = e.target.editInput.value;
+        const newDueDate = new Date(e.target.dueDateInput.value);
+        handleEdit(newTaskName, newDueDate);
+      }}>
         <input
           type="text"
           className="edit-input"
           name="editInput"
           defaultValue={todo.text}
+        />
+        <input
+          type="date"
+          className="edit-input"
+          name="dueDateInput"
+          defaultValue={todo.dueDate ? new Date(todo.dueDate).toISOString().slice(0, 10) : ''}
         />
         <button type="submit">Save</button>
       </form>
