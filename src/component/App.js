@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TodoForm from './TodoForm';
+import TodoItem from './TodoItem';
 
 function TodoList() {
   const [todos, setTodos] = useState([]);
@@ -9,12 +10,18 @@ function TodoList() {
     setTodos(newTodos);
   };
 
+  const removeTodo = index => {
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+  };
+
   return (
     <div>
       <TodoForm addTodo={addTodo} />
       <ul>
         {todos.map((todo, index) => (
-          <li key={index}>{todo.text}</li>
+          <TodoItem key={index} index={index} todo={todo} removeTodo={removeTodo} />
         ))}
       </ul>
     </div>
