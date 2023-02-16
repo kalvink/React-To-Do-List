@@ -47,15 +47,14 @@ function TodoList() {
   const handleSearch = e => {
     setSearchTerm(e.target.value);
   };
-  
-  const filteredTodos = todos
-    .filter(todo => {
-      return todo.text.toLowerCase().includes(searchTerm.toLowerCase());
-    })
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+  const filteredTodos = todos.filter(todo => {
+    return todo.text.toLowerCase().includes(searchTerm.toLowerCase());
+  }).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
   return (
-    <div>
+    <div className="container">
+      <h1>Todo List</h1>
       <TodoForm addTodo={addTodo} />
       <div className="search-bar">
         <input

@@ -1,57 +1,61 @@
-import React from 'react';
-import './TodoItem.css';
+import React, { useState, useRef, useEffect } from 'react';
 
 function TodoItem({ todo, index, removeTodo, toggleTodo, editTodo, pinTodo }) {
-  const completedStyle = {
-    textDecoration: 'line-through'
+  const [isEditing, setIsEditing] = useState(false);
+  const [text, setText] = useState(todo.text);
+  const [dueDate, setDueDate] = useState(todo.dueDate);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
+  const handleDoubleClick = () => {
+    setIsEditing(true);
   };
 
-  const handleEdit = (newTaskName, newDueDate) => {
-    if (newTaskName && newDueDate) {
-      editTodo(index, newTaskName, newDueDate.toISOString());
+  const handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      editTodo(index, text, dueDate);
+      setIsEditing(false);
     }
   };
 
-  const handlePin = () => {
-    pinTodo(index);
+  const handleBlur = () => {
+    editTodo(index, text, dueDate);
+    setIsEditing(false);
   };
 
   return (
-    <li className={todo.pinned ? 'pinned' : ''}>
-      <input
-        type="checkbox"
-        checked={todo.completed}
-        onChange={() => toggleTodo(index)}
-      />
-      <span style={todo.completed ? completedStyle : null}>
-        {todo.text}
-      </span>
-      <span className="due-date">{todo.dueDate ? new Date(todo.dueDate).toLocaleDateString() : ''}</span>
-
-      <button className="pin-button" onClick={handlePin}>
-        {todo.pinned ? 'Unpin' : 'Pin'}
-      </button>
-      <form className="edit-form" onSubmit={e => {
-        e.preventDefault();
-        const newTaskName = e.target.editInput.value;
-        const newDueDate = new Date(e.target.dueDateInput.value);
-        handleEdit(newTaskName, newDueDate);
-      }}>
+    <li className={todo.completed ? 'completed' : ''}>
+      {isEditing ? (
         <input
+          ref={inputRef}
           type="text"
           className="edit-input"
-          name="editInput"
-          defaultValue={todo.text}
+          value={text}
+          onChange={e => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
         />
-        <input
-          type="date"
-          className="edit-input"
-          name="dueDateInput"
-          defaultValue={todo.dueDate ? new Date(todo.dueDate).toISOString().slice(0, 10) : ''}
-        />
-        <button type="submit">Save</button>
-      </form>
-      <button className="remove-button" onClick={() => removeTodo(index)}>Remove</button>
+      ) : (
+        <div className="view">
+          <input
+            type="checkbox"
+            className="toggle"
+            checked={todo.completed}
+            onChange={() => toggleTodo(index)}
+          />
+          <label onDoubleClick={handleDoubleClick}>{todo.text}</label>
+          <span className="due-date">{todo.dueDate}</span>
+          <button className="pin" onClick={() => pinTodo(index)}>
+            {todo.pinned ? 'Unpin' : 'Pin'}
+          </button>
+          <button className="destroy" onClick={() => removeTodo(index)} />
+        </div>
+      )}
     </li>
   );
 }
