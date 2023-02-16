@@ -35,10 +35,15 @@ function TodoList() {
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
 
-  const pinTodo = taskToPin => {
+  const pinTodo = index => {
     const newTodos = [...todos];
-    const indexToPin = newTodos.findIndex(todo => todo === taskToPin);
-    newTodos[indexToPin].pinned = !newTodos[indexToPin].pinned;
+    const todoToPin = newTodos.splice(index, 1)[0];
+    todoToPin.pinned = !todoToPin.pinned;
+    if (!todoToPin.pinned) {
+      newTodos.push(todoToPin);
+    } else {
+      newTodos.unshift(todoToPin);
+    }
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
