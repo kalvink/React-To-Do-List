@@ -5,6 +5,7 @@ import './App.css';
 
 function TodoList() {
   const [todos, setTodos] = useState(JSON.parse(localStorage.getItem('todos')) || []);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const addTodo = (text, dueDate) => {
     const newTodos = [...todos, { text, completed: false, dueDate, pinned: false }];
@@ -43,11 +44,27 @@ function TodoList() {
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
 
+  const handleSearch = e => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredTodos = todos.filter(todo => {
+    return todo.text.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div>
       <TodoForm addTodo={addTodo} />
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
       <ul>
-        {todos.map((todo, index) => (
+        {filteredTodos.map((todo, index) => (
           <TodoItem
             key={index}
             index={index}
