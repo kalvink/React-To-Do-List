@@ -53,7 +53,9 @@ function TodoItem({ todo, index, removeTodo, toggleTodo, editTodo, pinTodo }) {
           <button className="pin" onClick={() => pinTodo(index)}>
             {todo.pinned ? 'Unpin' : 'Pin'}
           </button>
-          <button className="destroy" onClick={() => removeTodo(index)} />
+          <button className="destroy" onClick={() => removeTodo(index)}>
+            Remove
+          </button>
         </div>
       )}
     </li>
