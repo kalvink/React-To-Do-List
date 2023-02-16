@@ -37,13 +37,21 @@ function TodoList() {
 
   const pinTodo = index => {
     const newTodos = [...todos];
-    const todoToPin = newTodos.splice(index, 1)[0];
+    const [todoToPin] = newTodos.splice(index, 1);
     todoToPin.pinned = !todoToPin.pinned;
+
     if (!todoToPin.pinned) {
-      newTodos.push(todoToPin);
+      newTodos.push(todoToPin); // Add unpinned task to the end
     } else {
-      newTodos.unshift(todoToPin);
+      let i;
+      for (i = 0; i < newTodos.length; i++) {
+        if (!newTodos[i].pinned || i === newTodos.length - 1) {
+          break; // Find first unpinned task or reach end of array
+        }
+      }
+      newTodos.splice(i, 0, todoToPin); // Insert unpinned task at its new position
     }
+
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
