@@ -19,7 +19,7 @@ function TodoForm({ addTodo }) {
         className="input"
         value={value}
         onChange={e => setValue(e.target.value)}
-        placeholder="Add to-do item"
+        placeholder="Add todo"
       />
       <input
         type="date"
@@ -28,7 +28,9 @@ function TodoForm({ addTodo }) {
         onChange={e => setDueDate(e.target.value)}
         placeholder="Due date"
       />
-      <button type="submit">Add Item</button>
+      <button className="button" type="submit">
+        Add
+      </button>
     </form>
   );
 }

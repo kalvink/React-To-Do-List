@@ -50,9 +50,7 @@ function TodoItem({ todo, index, removeTodo, toggleTodo, editTodo, pinTodo }) {
           />
           <label onDoubleClick={handleDoubleClick}>{todo.text}</label>
           <span className="due-date">{todo.dueDate}</span>
-          <button className="pin" onClick={() => pinTodo(index)}>
-            {todo.pinned ? 'Unpin' : 'Pin'}
-          </button>
+          <button className="pin" onClick={() => pinTodo(todo)}>{todo.pinned ? 'Unpin' : 'Pin'}</button>
 
           <button className="remove-button" onClick={() => removeTodo(index)}>
             Remove

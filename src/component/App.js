@@ -35,22 +35,35 @@ function TodoList() {
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
 
-  const pinTodo = index => {
+  const pinTodo = taskToPin => {
     const newTodos = [...todos];
-    const todoToPin = newTodos.splice(index, 1);
-    todoToPin[0].pinned = !todoToPin[0].pinned;
-    newTodos.unshift(todoToPin[0]);
+    const indexToPin = newTodos.findIndex(todo => todo === taskToPin);
+    newTodos[indexToPin].pinned = !newTodos[indexToPin].pinned;
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
+
 
   const handleSearch = e => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredTodos = todos.filter(todo => {
-    return todo.text.toLowerCase().includes(searchTerm.toLowerCase());
-  }).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  const filteredTodos = todos
+    .filter(todo => todo.text.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => getSortOrderForTask(a) - getSortOrderForTask(b));
+
+
+  function getSortOrderForTask(task) {
+    if (!task.dueDate) {
+      return Infinity;
+    }
+    return new Date(task.dueDate);
+  }
+
+
+
+
+
 
   return (
     <div className="container">
@@ -68,13 +81,13 @@ function TodoList() {
         {filteredTodos.map((todo, index) => (
           <TodoItem
             key={index}
-            index={index}
             todo={todo}
             removeTodo={removeTodo}
             toggleTodo={toggleTodo}
             editTodo={editTodo}
             pinTodo={pinTodo}
           />
+
         ))}
       </ul>
     </div>
