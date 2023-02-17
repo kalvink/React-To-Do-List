@@ -8,42 +8,45 @@ function TodoList() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const addTodo = (text, dueDate) => {
-    const newTodos = [...todos, { text, completed: false, dueDate, pinned: false }];
+    let newTodos = [...todos, { text, completed: false, dueDate, pinned: false }];
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
 
   const removeTodo = index => {
-    const newTodos = [...todos];
+    let newTodos = [...todos];
     newTodos.splice(index, 1);
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
 
   const toggleTodo = index => {
-    const newTodos = [...todos];
+    let newTodos = [...todos];
     const todo = newTodos[index];
     const updatedTodo = {
       ...todo,
       completed: !todo.completed,
     };
     newTodos[index] = updatedTodo;
+    if (todo.pinned && updatedTodo.completed) {
+      // Move the completed pinned item to the bottom of the pinned list
+      const pinnedTodos = newTodos.filter(t => t.pinned && !t.completed);
+      const completedTodo = newTodos.filter(t => t.pinned && t.completed)[0];
+      const newPinnedTodos = [...pinnedTodos];
+      if (!pinnedTodos.includes(completedTodo)) {
+        newPinnedTodos.push(completedTodo);
+      }
+      const newUnpinnedTodos = newTodos.filter(t => !t.pinned);
+      newTodos = [...newPinnedTodos, ...newUnpinnedTodos];
+    }
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
-    if (todo.completed && todo.pinned) {
-      // The completed pinned item is being unpinned, so keep it marked as completed
-      todo.completed = false;
-      const newUnpinnedTodos = [...newTodos.filter(t => !t.pinned), todo];
-      newUnpinnedTodos.sort((a, b) => getSortOrderForTask(a) - getSortOrderForTask(b));
-      setTodos([...newTodos.filter(t => t.pinned), ...newUnpinnedTodos]);
-      localStorage.setItem('todos', JSON.stringify([...newTodos.filter(t => t.pinned), ...newUnpinnedTodos]));
-    }
   };
 
 
 
   const editTodo = (index, text, dueDate) => {
-    const newTodos = [...todos];
+    let newTodos = [...todos];
     newTodos[index].text = text;
     newTodos[index].dueDate = dueDate;
     setTodos(newTodos);
@@ -53,10 +56,7 @@ function TodoList() {
   const pinTodo = index => {
     const newTodos = [...todos];
     const todoToPin = newTodos[index];
-    const firstTask = newTodos.find(task => task.pinned);
-
     todoToPin.pinned = !todoToPin.pinned;
-    todoToPin.completed = firstTask ? firstTask.completed : false;
 
     if (todoToPin.pinned) {
       // Remove the item from the list and put it at the start
@@ -83,9 +83,15 @@ function TodoList() {
       });
     }
 
+    if (!todoToPin.completed) {
+      // Only set completed to false if the task is not already completed
+      todoToPin.completed = false;
+    }
+
     setTodos(newTodos);
     localStorage.setItem('todos', JSON.stringify(newTodos));
   };
+
 
 
 
@@ -105,30 +111,22 @@ function TodoList() {
     return new Date(task.dueDate).getTime();
   }
 
-
   useEffect(() => {
-    // Update the display when a task is marked as done
     const newTodos = [...todos];
     const undoneTodos = newTodos.filter(todo => !todo.completed);
     undoneTodos.sort((a, b) => getSortOrderForTask(a) - getSortOrderForTask(b));
 
-    // Move the pinned items to the top of the undone list
     const pinnedTodos = undoneTodos.filter(todo => todo.pinned);
     const unpinnedTodos = undoneTodos.filter(todo => !todo.pinned);
     const sortedUndoneTodos = [...pinnedTodos, ...unpinnedTodos];
 
     setTodos([...sortedUndoneTodos, ...newTodos.filter(todo => todo.completed)]);
-
-    // Update local storage
     localStorage.setItem('todos', JSON.stringify([...sortedUndoneTodos, ...newTodos.filter(todo => todo.completed)]));
-  }, [todos]);
-
-
-
+  }, [todos, todos.map(todo => todo.completed).join(), todos.map(todo => todo.pinned).join()]);
 
   return (
     <div className="container">
-      <h1>Todo List</h1>
+      <h1><a>Todo List</a></h1>
       <TodoForm addTodo={addTodo} />
       <div className="search-bar">
         <input
